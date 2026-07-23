@@ -20,7 +20,6 @@
 - **Resilient multi-source model:** secondary calls run in parallel and each returns an explicit success, empty, unavailable, or rate-limited state. This gives useful partial reports instead of failing the entire page when GitHub or news is unavailable.
 - **News and brand assets:** used Google News RSS and first-party website metadata/favicons after the original Clearbit logo path was discontinued. Both are free and degrade independently, but RSS is not a contractual news API.
 - **Adaptive dossier layout:** companies with verified GitHub activity show developer signals; companies without it show source coverage and operating context instead. The report stays useful for technology companies and non-technology companies alike.
-- **Dark-only release theme:** removed the light/dark control after visual QA. A single deliberate dark research environment is more coherent across the landing page and dossier, and it eliminates a local hydration mismatch.
 - **Motion with purpose:** used pointer parallax, source orbits, viewport reveals, and reduced-motion fallbacks. Above-the-fold content stays server-visible to protect LCP.
 
 ## Hard parts / dead ends
@@ -30,7 +29,6 @@
 - **Search dropdown usability:** seven results initially exceeded the visible search surface. The final dropdown supports viewport-bounded pointer/touch scrolling, keyboard navigation, and automatic active-option scrolling.
 - **Data-dependent layout gaps:** sparse-source reports made grid rows appear randomly empty. Normalising panel spans and removing height coupling made rich and sparse reports feel intentionally composed.
 - **REST Countries API change:** the older endpoint returned a changed envelope. The adapter was migrated to the current authenticated v5 response shape with a graceful missing-key fallback.
-- **Hydration mismatch:** the former theme switch caused the Next.js dev overlay to report a theme mismatch. Removing runtime theme switching and rendering dark by default resolved it.
 
 ## How I verified it works
 

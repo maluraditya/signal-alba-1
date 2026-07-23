@@ -70,14 +70,6 @@ export function LandingHero() {
       <div className="hero-halo hero-halo-two" aria-hidden="true" />
       <div className="signal-hero-inner">
         <div className="hero-copy">
-          <motion.p
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="hero-kicker"
-          >
-            <span /> Field note 01 · Public evidence, connected
-          </motion.p>
           <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}

@@ -13,7 +13,10 @@ import { formatCompactCurrency } from "@/lib/utils";
 const sourceColors = ["#25261f", "#9aca43", "#c8b6ff", "#f2bd5a", "#8aa1b1"];
 
 export function DashboardView({ analytics, deals, activities, profile }: { analytics: AnalyticsPayload; deals: Deal[]; activities: Activity[]; profile?: Profile }) {
-  const { metrics, conversionFunnel, dealsBySource, activitiesCompleted } = analytics;
+  const { metrics } = analytics;
+  const conversionFunnel = analytics.conversionFunnel ?? [];
+  const dealsBySource = analytics.dealsBySource ?? [];
+  const activitiesCompleted = analytics.activitiesCompleted ?? [];
   const firstName = profile?.full_name?.split(" ")[0] || "there";
   const today = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   const totalDeals = conversionFunnel.reduce((sum, item) => sum + item.deals, 0);

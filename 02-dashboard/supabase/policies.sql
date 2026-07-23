@@ -1,0 +1,28 @@
+-- PipelineOS RLS policy catalogue.
+-- The executable policy definitions live in migrations/202607240002_rls.sql.
+--
+-- Security invariant:
+--   Every application row carries owner_id and every policy compares it to
+--   auth.uid(). The anonymous role receives no table policy.
+--
+-- SELECT: authenticated users can read only rows where owner_id = auth.uid().
+-- INSERT: WITH CHECK prevents creating a row on another user's behalf.
+-- UPDATE: USING scopes target rows; WITH CHECK prevents changing ownership.
+-- DELETE: USING scopes deletions to records owned by the caller.
+--
+-- This four-policy set is applied to:
+--   profiles, companies, contacts, deals, activities, tags, deal_tags.
+--
+-- Cross-owner relationship defense:
+--   validate_owned_relationships() rejects foreign keys whose parent row has a
+--   different owner_id. This prevents a user from linking their deal to another
+--   user's company even if an identifier were somehow disclosed.
+--
+-- Analytics:
+--   Views use security_invoker=true, so underlying table RLS remains active.
+--   get_dashboard_analytics() is SECURITY INVOKER and explicitly filters by
+--   auth.uid(). EXECUTE is granted only to the authenticated role.
+--
+-- Two-account verification:
+--   Follow docs/SECURITY_TEST.md. Account B must receive zero rows and cannot
+--   read, update, delete, or reference Account A's records.

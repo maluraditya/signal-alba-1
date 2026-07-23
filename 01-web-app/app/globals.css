@@ -1000,7 +1000,6 @@ html[data-theme="light"] {
   position: relative;
   width: min(100%, 1320px);
   margin: auto;
-  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--signal-accent) 45%, transparent);
   background: linear-gradient(
     130deg,

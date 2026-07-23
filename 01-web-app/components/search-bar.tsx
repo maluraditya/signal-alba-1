@@ -195,7 +195,9 @@ export function SearchBar({
   const showDropdown = open && query.trim().length >= 2;
 
   return (
-    <div className={cn("relative w-full", compact ? "max-w-xl" : "max-w-3xl")}>
+    <div
+      className={cn("relative z-30 w-full", compact ? "max-w-xl" : "max-w-3xl")}
+    >
       <form
         onSubmit={submit}
         className={cn(
@@ -269,7 +271,7 @@ export function SearchBar({
       </form>
 
       {showDropdown ? (
-        <div className="absolute top-[calc(100%-2px)] right-0 left-0 z-10 overflow-hidden rounded-b-[22px] border border-t-0 border-white/[0.1] bg-[#0b0f16]/98 pt-3 shadow-[0_28px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
+        <div className="absolute top-[calc(100%-2px)] right-0 left-0 z-50 overflow-hidden rounded-b-[22px] border border-t-0 border-white/[0.1] bg-[#0b0f16]/98 pt-3 shadow-[0_28px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
           <div className="flex items-center justify-between px-4 py-2 font-mono text-[9px] tracking-[0.16em] text-white/40 uppercase">
             <span>Company matches</span>
             {lookupState === "ready" ? (
@@ -280,7 +282,7 @@ export function SearchBar({
             id={listboxId}
             role="listbox"
             aria-label="Company matches"
-            className="max-h-[min(25rem,52svh)] [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,.18)_transparent] overflow-y-auto overscroll-contain"
+            className="max-h-[min(25rem,52svh)] touch-pan-y [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,.18)_transparent] overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]"
           >
             {lookupState === "loading" || lookupState === "idle" ? (
               <div

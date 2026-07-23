@@ -14,7 +14,7 @@ export function ReportHeader({ report }: { report: IntelligenceReport }) {
       ? report.website.data.url
       : identity.website;
   return (
-    <header className="report-header relative overflow-hidden pb-10">
+    <header className="report-header relative pb-10">
       <div
         aria-hidden="true"
         className="report-header-halo absolute inset-x-0 -top-52 h-96 blur-[120px]"

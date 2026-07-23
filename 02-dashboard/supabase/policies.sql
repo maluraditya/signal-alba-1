@@ -21,7 +21,8 @@
 -- Analytics:
 --   Views use security_invoker=true, so underlying table RLS remains active.
 --   get_dashboard_analytics() is SECURITY INVOKER and explicitly filters by
---   auth.uid(). EXECUTE is granted only to the authenticated role.
+--   auth.uid(). EXECUTE is revoked from PUBLIC and anon, then granted only to
+--   the authenticated role.
 --
 -- Two-account verification:
 --   Follow docs/SECURITY_TEST.md. Account B must receive zero rows and cannot

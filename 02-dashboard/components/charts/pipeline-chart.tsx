@@ -11,6 +11,11 @@ import {
 } from "recharts";
 import type { StageMetric } from "@/lib/types";
 import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
+import {
+  chartTooltipContentStyle,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+} from "@/components/charts/chart-tooltip-theme";
 
 export function PipelineChart({ data }: { data: StageMetric[] }) {
   return (
@@ -22,7 +27,9 @@ export function PipelineChart({ data }: { data: StageMetric[] }) {
           <YAxis tickFormatter={formatCompactCurrency} axisLine={false} tickLine={false} tick={{ fill: "#85877e", fontSize: 10 }} />
           <Tooltip
             cursor={{ fill: "#f2f3ed" }}
-            contentStyle={{ background: "#171815", border: "1px solid rgba(255,255,255,.08)", borderRadius: 10, fontSize: 12 }}
+            contentStyle={chartTooltipContentStyle}
+            itemStyle={chartTooltipItemStyle}
+            labelStyle={chartTooltipLabelStyle}
             formatter={(value) => [formatCurrency(Number(value)), "Pipeline"]}
           />
           <Bar dataKey="value" fill="#24251f" radius={[6, 6, 2, 2]} maxBarSize={42} />

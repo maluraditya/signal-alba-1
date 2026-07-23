@@ -11,6 +11,11 @@ import {
 } from "recharts";
 import type { MonthlyRevenue } from "@/lib/types";
 import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
+import {
+  chartTooltipContentStyle,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+} from "@/components/charts/chart-tooltip-theme";
 
 export function RevenueChart({ data }: { data: MonthlyRevenue[] }) {
   return (
@@ -28,8 +33,9 @@ export function RevenueChart({ data }: { data: MonthlyRevenue[] }) {
           <YAxis tickFormatter={formatCompactCurrency} axisLine={false} tickLine={false} tick={{ fill: "#85877e", fontSize: 10 }} />
           <Tooltip
             cursor={{ stroke: "#b8baaf", strokeDasharray: "4 4" }}
-            contentStyle={{ background: "#171815", border: "1px solid rgba(255,255,255,.08)", borderRadius: 10, fontSize: 12 }}
-            labelStyle={{ color: "#9b9d95", marginBottom: 4 }}
+            contentStyle={chartTooltipContentStyle}
+            itemStyle={chartTooltipItemStyle}
+            labelStyle={chartTooltipLabelStyle}
             formatter={(value) => [formatCurrency(Number(value)), "Revenue"]}
           />
           <Area type="monotone" dataKey="revenue" stroke="#86b831" strokeWidth={2.5} fill="url(#revenue-fill)" activeDot={{ r: 4, fill: "#171815", stroke: "#d8ff72", strokeWidth: 2 }} />

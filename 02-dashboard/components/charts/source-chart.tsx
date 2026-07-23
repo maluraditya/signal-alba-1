@@ -1,6 +1,11 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  chartTooltipContentStyle,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+} from "@/components/charts/chart-tooltip-theme";
 import type { SourceMetric } from "@/lib/types";
 
 const colors = ["#25261f", "#9aca43", "#c8b6ff", "#f2bd5a", "#8aa1b1"];
@@ -15,7 +20,7 @@ export function SourceChart({ data }: { data: SourceMetric[] }) {
               <Cell key={item.source} fill={colors[index % colors.length]} />
             ))}
           </Pie>
-          <Tooltip contentStyle={{ background: "#171815", border: "1px solid rgba(255,255,255,.08)", borderRadius: 10, fontSize: 12 }} />
+          <Tooltip contentStyle={chartTooltipContentStyle} itemStyle={chartTooltipItemStyle} labelStyle={chartTooltipLabelStyle} />
         </PieChart>
       </ResponsiveContainer>
     </div>

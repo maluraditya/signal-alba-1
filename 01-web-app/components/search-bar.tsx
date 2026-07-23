@@ -201,7 +201,8 @@ export function SearchBar({
       <form
         onSubmit={submit}
         className={cn(
-          "group relative z-20 flex items-center rounded-[22px] border bg-[#0d1118]/95 shadow-[0_30px_120px_rgba(0,0,0,0.5)] transition duration-300 focus-within:border-blue-300/40 focus-within:shadow-[0_0_0_4px_rgba(120,169,255,0.08),0_30px_120px_rgba(0,0,0,0.5)]",
+          "group relative z-20 flex items-center border bg-[#0d1118]/95 shadow-[0_30px_120px_rgba(0,0,0,0.5)] transition duration-300 focus-within:border-blue-300/40 focus-within:shadow-[0_0_0_4px_rgba(120,169,255,0.08),0_30px_120px_rgba(0,0,0,0.5)]",
+          showDropdown ? "rounded-t-[22px] rounded-b-none" : "rounded-[22px]",
           compact
             ? "h-12 border-white/10"
             : "signal-glow h-[68px] border-white/[0.12]",
@@ -271,7 +272,12 @@ export function SearchBar({
       </form>
 
       {showDropdown ? (
-        <div className="absolute top-[calc(100%-2px)] right-0 left-0 z-50 overflow-hidden rounded-b-[22px] border border-t-0 border-white/[0.1] bg-[#0b0f16]/98 pt-3 shadow-[0_28px_80px_rgba(0,0,0,.55)] backdrop-blur-xl">
+        <div
+          className={cn(
+            "absolute right-0 left-0 z-50 overflow-hidden rounded-b-[22px] border border-t-0 border-white/[0.1] bg-[#0b0f16]/98 pt-3 shadow-[0_28px_80px_rgba(0,0,0,.55)] backdrop-blur-xl",
+            compact ? "top-[47px]" : "top-[67px]",
+          )}
+        >
           <div className="flex items-center justify-between px-4 py-2 font-mono text-[9px] tracking-[0.16em] text-white/40 uppercase">
             <span>Company matches</span>
             {lookupState === "ready" ? (

@@ -20,6 +20,13 @@ test("ships product metadata and no starter preview marker", async () => {
   );
 });
 
+test("keeps deployment config imports in committed source directories", async () => {
+  const viteConfig = await source("vite.config.ts");
+  assert.match(viteConfig, /\.\/config\/sites-vite-plugin/);
+  await access(path.join(root, "config/sites-vite-plugin.ts"));
+  assert.doesNotMatch(viteConfig, /\.\/build\//);
+});
+
 test("uses Supabase as the only CRM source of truth", async () => {
   await assert.rejects(access(path.join(root, "lib/demo-data.ts")));
   const loaders = await source("lib/data/loaders.ts");

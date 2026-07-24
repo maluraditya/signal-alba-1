@@ -57,6 +57,7 @@ Remove assessment accounts and seed migrations before adapting this repository f
 ## Documentation
 
 - [Requirements checklist](docs/REQUIREMENTS.md)
+- [Build log](docs/BUILD_LOG.md)
 - [Database schema](docs/DATABASE.md)
 - [Entity relationship diagram](docs/ERD.md)
 - [Architecture](docs/ARCHITECTURE.md)

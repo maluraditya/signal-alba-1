@@ -24,14 +24,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <section className="flex items-center justify-center px-5 py-12">
         <div className="w-full max-w-sm">
           <div className="flex items-center gap-2.5 lg:hidden"><span className="grid size-7 place-items-center rounded-lg bg-[#d8ff72] text-[#10110f]"><Sparkles className="size-4" /></span><span className="text-sm font-semibold">PipelineOS</span></div>
-          <p className="mt-12 font-serif text-4xl tracking-[-0.04em] lg:mt-0">Welcome back.</p>
-          <p className="mt-3 text-xs leading-5 text-[#85877e]">Sign in to enter your private sales workspace.</p>
-          {error === "auth_callback_failed" ? (
-            <p className="mt-5 rounded-xl border border-red-300/20 bg-red-300/10 px-4 py-3 text-xs leading-5 text-red-100" role="alert">
-              That sign-in link is invalid or expired. Request a new confirmation or password-reset email and try again.
-            </p>
-          ) : null}
-          <LoginForm />
+          <LoginForm callbackError={error === "auth_callback_failed"} />
         </div>
       </section>
     </main>

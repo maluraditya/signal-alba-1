@@ -7,13 +7,18 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { Button } from "@/components/ui/button";
 
-export function LoginForm() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+interface LoginFormProps {
+  callbackError?: boolean;
+}
+
+export function LoginForm({ callbackError = false }: LoginFormProps) {
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
+  const [recoveryEmail, setRecoveryEmail] = useState<string | null>(null);
   const configured = isSupabaseConfigured();
 
   async function submit(event: React.FormEvent) {
@@ -25,6 +30,14 @@ export function LoginForm() {
     setLoading(true);
     try {
       const supabase = createClient();
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
+        });
+        if (error) throw error;
+        setRecoveryEmail(email);
+        return;
+      }
       const result = mode === "login"
         ? await supabase.auth.signInWithPassword({ email, password })
         : await supabase.auth.signUp({
@@ -68,18 +81,15 @@ export function LoginForm() {
     }
   }
 
-  async function resetPassword() {
-    if (!email) {
-      toast.error("Enter your email first");
-      return;
-    }
+  async function resendRecovery() {
+    if (!recoveryEmail) return;
     setLoading(true);
     try {
-      const { error } = await createClient().auth.resetPasswordForEmail(email, {
+      const { error } = await createClient().auth.resetPasswordForEmail(recoveryEmail, {
         redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset`,
       });
       if (error) throw error;
-      toast.success("Password reset link sent");
+      toast.success("A new password reset link has been sent");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to send reset link");
     } finally {
@@ -93,7 +103,7 @@ export function LoginForm() {
     return (
       <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6" role="status" aria-live="polite">
         <span className="grid size-11 place-items-center rounded-xl bg-[#d8ff72] text-[#10110f]"><MailCheck className="size-5" /></span>
-        <h2 className="mt-5 text-lg font-semibold text-white">Check your inbox</h2>
+        <h1 className="mt-5 text-lg font-semibold text-white">Check your inbox</h1>
         <p className="mt-2 text-xs leading-6 text-[#92958c]">We sent a confirmation link to <strong className="font-medium text-[#d7d8d2]">{confirmationEmail}</strong>. Open the email and confirm your account to continue to PipelineOS.</p>
         <p className="mt-3 text-[11px] leading-5 text-[#696b64]">The link may take a minute to arrive. Check your spam folder if you don’t see it.</p>
         <Button type="button" variant="outline" className="mt-6 w-full border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]" disabled={loading} onClick={resendConfirmation}>{loading ? <LoaderCircle className="size-4 animate-spin" /> : <RefreshCw className="size-3.5" />} Resend confirmation email</Button>
@@ -102,7 +112,35 @@ export function LoginForm() {
     );
   }
 
+  if (recoveryEmail) {
+    return (
+      <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6" role="status" aria-live="polite">
+        <span className="grid size-11 place-items-center rounded-xl bg-[#d8ff72] text-[#10110f]"><MailCheck className="size-5" /></span>
+        <h1 className="mt-5 text-lg font-semibold text-white">Check your inbox</h1>
+        <p className="mt-2 text-xs leading-6 text-[#92958c]">We sent a secure password reset link to <strong className="font-medium text-[#d7d8d2]">{recoveryEmail}</strong>.</p>
+        <p className="mt-3 text-[11px] leading-5 text-[#696b64]">Open the link to choose a new password. Check your spam folder if it does not arrive within a few minutes.</p>
+        <Button type="button" variant="outline" className="mt-6 w-full border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]" disabled={loading} onClick={resendRecovery}>{loading ? <LoaderCircle className="size-4 animate-spin" /> : <RefreshCw className="size-3.5" />} Resend reset link</Button>
+        <button type="button" onClick={() => { setRecoveryEmail(null); setMode("login"); setEmail(""); }} className="mt-4 w-full text-center text-[11px] text-[#82847c] hover:text-white">Back to sign in</button>
+      </section>
+    );
+  }
+
+  const title = mode === "login" ? "Welcome back." : mode === "signup" ? "Create your account." : "Reset your password.";
+  const description = mode === "login"
+    ? "Sign in to enter your private sales workspace."
+    : mode === "signup"
+      ? "Create a secure, private PipelineOS workspace."
+      : "Enter your email and we’ll send you a secure reset link.";
+
   return (
+    <>
+      <h1 className="mt-12 font-serif text-4xl tracking-[-0.04em] lg:mt-0">{title}</h1>
+      <p className="mt-3 text-xs leading-5 text-[#85877e]">{description}</p>
+      {callbackError ? (
+        <p className="mt-5 rounded-xl border border-red-300/20 bg-red-300/10 px-4 py-3 text-xs leading-5 text-red-100" role="alert">
+          That sign-in link is invalid or expired. Request a new confirmation or password-reset email and try again.
+        </p>
+      ) : null}
     <form onSubmit={submit} className="mt-8">
       {!configured ? (
         <div className="mb-5 rounded-xl border border-amber-300/20 bg-amber-200/10 px-4 py-3 text-xs leading-5 text-amber-100" role="alert">
@@ -110,11 +148,16 @@ export function LoginForm() {
         </div>
       ) : null}
       {mode === "signup" ? <label className="mb-4 block text-[11px] font-medium text-[#b6b8af]">Full name<input required value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Alex Morgan" autoComplete="name" className={fieldClass} /></label> : null}
-      <label className="block text-[11px] font-medium text-[#b6b8af]">Work email<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" className={fieldClass} /></label>
-      <label className="mt-4 block text-[11px] font-medium text-[#b6b8af]">Password<input type="password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8+ characters" autoComplete={mode === "login" ? "current-password" : "new-password"} className={fieldClass} /></label>
-      {mode === "login" ? <button type="button" disabled={loading} onClick={resetPassword} className="mt-2 text-[11px] text-[#92958c] hover:text-white">Forgot password?</button> : null}
-      <Button type="submit" className="mt-6 w-full" size="lg" disabled={loading || !configured}>{loading ? <LoaderCircle className="size-4 animate-spin" /> : <>{mode === "login" ? "Sign in" : "Create account"} <ArrowRight className="size-4" /></>}</Button>
-      <button type="button" onClick={() => setMode(mode === "login" ? "signup" : "login")} className="mt-4 w-full text-center text-[11px] text-[#82847c] hover:text-white">{mode === "login" ? "New to PipelineOS? Create an account" : "Already have an account? Sign in"}</button>
+      <label className="block text-[11px] font-medium text-[#b6b8af]">Work email<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" autoComplete="email" className={fieldClass} /></label>
+      {mode !== "forgot" ? <label className="mt-4 block text-[11px] font-medium text-[#b6b8af]">Password<input type="password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="8+ characters" autoComplete={mode === "login" ? "current-password" : "new-password"} className={fieldClass} /></label> : null}
+      {mode === "login" ? <button type="button" disabled={loading} onClick={() => { setMode("forgot"); setPassword(""); }} className="mt-2 text-[11px] text-[#92958c] hover:text-white">Forgot password?</button> : null}
+      <Button type="submit" className="mt-6 w-full" size="lg" disabled={loading || !configured}>{loading ? <LoaderCircle className="size-4 animate-spin" /> : <>{mode === "login" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"} <ArrowRight className="size-4" /></>}</Button>
+      {mode === "forgot" ? (
+        <button type="button" onClick={() => setMode("login")} className="mt-4 w-full text-center text-[11px] text-[#82847c] hover:text-white">Back to sign in</button>
+      ) : (
+        <button type="button" onClick={() => setMode(mode === "login" ? "signup" : "login")} className="mt-4 w-full text-center text-[11px] text-[#82847c] hover:text-white">{mode === "login" ? "New to PipelineOS? Create an account" : "Already have an account? Sign in"}</button>
+      )}
     </form>
+    </>
   );
 }

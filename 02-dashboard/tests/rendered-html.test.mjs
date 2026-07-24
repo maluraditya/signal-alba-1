@@ -89,6 +89,9 @@ test("includes the complete email authentication lifecycle", async () => {
   assert.match(login, /signInWithPassword/);
   assert.match(login, /signUp/);
   assert.match(login, /resetPasswordForEmail/);
+  assert.match(login, /Reset your password\./);
+  assert.match(login, /Send reset link/);
+  assert.match(login, /setRecoveryEmail/);
   const sidebar = await source("components/layout/sidebar.tsx");
   assert.match(sidebar, /signOut/);
   await access(path.join(root, "app/auth/reset/page.tsx"));

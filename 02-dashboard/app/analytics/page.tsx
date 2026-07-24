@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Sparkles } from "lucide-react";
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card } from "@/components/ui/card";
 import { RevenueChart } from "@/components/charts/revenue-chart";
@@ -15,7 +14,7 @@ export default async function AnalyticsPage() {
   const { metrics, monthlyRevenue, pipelineByStage, dealsBySource, activitiesCompleted } = await loadAnalytics();
   const totalActivities = activitiesCompleted.reduce((sum, item) => sum + item.completed, 0);
   return (
-    <AppShell><div className="mx-auto max-w-[1540px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+    <div className="mx-auto max-w-[1540px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <PageHeader eyebrow="Intelligence" title="Analytics" description="Server-aggregated revenue intelligence, without exporting your pipeline to a spreadsheet." />
       <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
@@ -41,6 +40,6 @@ export default async function AnalyticsPage() {
           <div className="mt-8 grid gap-3 sm:grid-cols-3">{[[formatCompactCurrency(metrics.wonRevenue), "Revenue won this month"], [metrics.openDeals.toString(), "Open opportunities"], [metrics.overdueActivities.toString(), "Overdue activities"]].map(([value, label]) => <div key={label} className="rounded-xl border border-[#e4e5de] bg-[#fafaf7] p-4"><p className="text-lg font-medium">{value}</p><p className="mt-1 text-[9px] uppercase tracking-wider text-[#74766f]">{label}</p></div>)}</div>
         </Card>
       </section>
-    </div></AppShell>
+    </div>
   );
 }

@@ -56,6 +56,23 @@ test("keeps authenticated routes dynamic and centralizes Supabase configuration"
   assert.match(callback, /auth_callback_failed/);
 });
 
+test("keeps the workspace shell mounted during route loading", async () => {
+  const layout = await source("app/layout.tsx");
+  assert.match(layout, /<AppFrame>\{children\}<\/AppFrame>/);
+
+  const frame = await source("components/layout/app-frame.tsx");
+  assert.match(frame, /return <AppShell>\{children\}<\/AppShell>/);
+
+  const loading = await source("app/loading.tsx");
+  assert.match(loading, /aria-busy="true"/);
+  assert.doesNotMatch(loading, /lg:pl-\[276px\]/);
+
+  for (const page of ["activities", "analytics", "companies", "contacts", "deals", "settings"]) {
+    assert.doesNotMatch(await source(`app/${page}/page.tsx`), /<AppShell/);
+  }
+  assert.doesNotMatch(await source("components/dashboard/dashboard-view.tsx"), /<AppShell/);
+});
+
 test("uses Supabase as the only CRM source of truth", async () => {
   await assert.rejects(access(path.join(root, "lib/demo-data.ts")));
   const loaders = await source("lib/data/loaders.ts");

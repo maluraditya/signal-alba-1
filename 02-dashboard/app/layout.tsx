@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { AppFrame } from "@/components/layout/app-frame";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -52,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers><AppFrame>{children}</AppFrame></Providers>
       </body>
     </html>
   );
